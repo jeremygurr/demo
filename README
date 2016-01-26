@@ -3,52 +3,60 @@ Usage:
 try it out with: 
   mvn install
 
-That will run the tests which demonstrate the correct functioning of the web service. 
+That will run the tests which demonstrate the correct functioning of the web
+service. 
 
-----------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 Summary of design:
 
-There are many ways that this could be done, but I tried to balance not taking too much time on it,
-yet still demonstrating some of my skills at the same time. The basic idea for the duplicate checker
-service is to identify similarities, assign a weight to each match, add up those weights, and see if
-it is a sufficiently high number to consider it a potential duplicate. Because the soundex function
-is easily found in most database systems, I used that for a quick fuzzy comparison of string values.
-A first name match, for example, doesn't have as much weight as a last name match, since it is so
-common for two people to have the same first name. Likewise, if a phone number matches, that has a
-high weight that guarantees it's marked as a duplicate, since it is very unlikely for two customers
-to have the same phone number. The algorithm is easily tweaked, and the performance cost is a single
-table scan, since indexes couldn't be used in this case. There are many techniques which could be 
-used to speed this up, if necessary, such as recording the soundex values in a separate column (or
-table), and indexing those. How much this would help would depend on the number of customer records
-and the number of columns in the table. Of course, a more powerful, external indexing service 
-could also be used. 
+There are many ways that this could be done, but I tried to balance not taking
+too much time on it, yet still demonstrating some of my skills at the same time.
+The basic idea for the duplicate checker service is to identify similarities,
+assign a weight to each match, add up those weights, and see if it is a
+sufficiently high number to consider it a potential duplicate. Because the
+soundex function is easily found in most database systems, I used that for a
+quick fuzzy comparison of string values.  A first name match, for example,
+doesn't have as much weight as a last name match, since it is so common for two
+people to have the same first name. Likewise, if a phone number matches, that
+has a high weight that guarantees it's marked as a duplicate, since it is very
+unlikely for two customers to have the same phone number. The algorithm is
+easily tweaked, and the performance cost is a single table scan, since indexes
+couldn't be used in this case. There are many techniques which could be used to
+speed this up, if necessary, such as recording the soundex values in a separate
+column (or table), and indexing those. How much this would help would depend on
+the number of customer records and the number of columns in the table. Of
+course, a more powerful, external indexing service could also be used. 
 
-I created a simple database abstraction which separated the main body of code from the implementation
-details of how the data is stored and retrieved, which I've found immensely useful over the years. 
-Behind that I used JOOQ to generate compiler checked / sql injection proof sql. The beauty of this
-approach is that, by just changing one line of code, I could connect to a MySQL, or a H2, or a
-Postgres db, with the exception of the database setup code, which ideally would be managed by a
-framework like flyway anyway.
+I created a simple database abstraction which separated the main body of code
+from the implementation details of how the data is stored and retrieved, which
+I've found immensely useful over the years.  Behind that I used JOOQ to generate
+compiler checked / sql injection proof sql. The beauty of this approach is that,
+by just changing one line of code, I could connect to a MySQL, or a H2, or a
+Postgres db, with the exception of the database setup code, which ideally would
+be managed by a framework like flyway anyway.
 
-Everything was done using basic test driven development techniques, forcing all of the code to be
-easily testable and modular. Code coverage, although not perfect, is naturally quite high. 
+Everything was done using basic test driven development techniques, forcing all
+of the code to be easily testable and modular. Code coverage, although not
+perfect, is naturally quite high. 
 
-All of the code was built by me in the last few days, with the exception of the automatically
-generated code in the demo.generated package, which is used by JOOQ. 
+All of the code was built by me in the last few days, with the exception of the
+automatically generated code in the demo.generated package, which is used by
+JOOQ. 
 
-----------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 Postmortem:
 
-Things went fairly smoothly except for a dependency mismatch I had which took several hours of
-barking up the wrong tree before I found the issue. 
+Things went fairly smoothly except for a dependency mismatch I had which took
+several hours of barking up the wrong tree before I found the issue. 
 
-As far as lessons learned, I did end up having to make some duplicate code that I didn't like,
-because of conflicts between the JOOQ framework and the Jersey when it comes to automatically
-configuring the entity classes. If I had more time I would create code generators that would
-allow the essential information to be in one place. Also, having the database setup code as
-pure sql is less clean than I'd like it to be. I'd prefer to use a framework that can create and
-maintain the schema based on the core java entities. Integrating flyway would probably do the
-trick. It would also be nice to have a full searching engine framework in place too, like SOLR
-or ElasticSearch.
+As far as lessons learned, I did end up having to make some duplicate code that
+I didn't like, because of conflicts between the JOOQ framework and the Jersey
+when it comes to automatically configuring the entity classes. If I had more
+time I would create code generators that would allow the essential information
+to be in one place. Also, having the database setup code as pure sql is less
+clean than I'd like it to be. I'd prefer to use a framework that can create and
+maintain the schema based on the core java entities. Integrating flyway would
+probably do the trick. It would also be nice to have a full searching engine
+framework in place too, like SOLR or ElasticSearch.
 
 
