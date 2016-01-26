@@ -73,6 +73,15 @@ public class CustomerResource {
 		return Response.status(SC_OK).entity("It worked!").build();
 	}
 
+	@GET
+	@Path("{id : \\d+}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCustomer(@PathParam("id") int customerId) {
+		final DataResult<Customer> result = db.getCustomer(SimpleId.make(customerId));
+		final Response response = Response.status(getResponseStatus(result, SC_CREATED)).entity(result.entity).build();
+		return response;
+	}
+
 	private int getResponseStatus(@NotNull DataResult result, int successCode) {
 		return result.successful ? successCode : SC_INTERNAL_SERVER_ERROR;
 	}

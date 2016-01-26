@@ -157,7 +157,7 @@ public class CustomerResourceTest extends JerseyTest {
 
 	@Test
 	public void testAddCorruptCustomer() {
-		final Entity<String> customerJson = Entity.json("I am corrupt");
+		final Entity<String> customerJson = Entity.json("Bad entity");
 		final Response response = target("customers").request(APPLICATION_JSON).buildPost(customerJson).invoke();
 
 		assertThat("request failed", response.getStatus(), is(SC_BAD_REQUEST));
