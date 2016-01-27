@@ -37,6 +37,7 @@ public class SimpleDataBridge implements DataBridge {
 		firstName = customerTable.firstName;
 		lastName = customerTable.lastName;
 		phone = customerTable.phone;
+		initialize();
 	}
 
 	private Connection getConnection() throws SQLException, ClassNotFoundException {
@@ -45,7 +46,7 @@ public class SimpleDataBridge implements DataBridge {
 		                                   + ";DB_CLOSE_DELAY=-1"
 		                                   + ";DATABASE_TO_UPPER=false"
 		                                   + ";INIT=CREATE SCHEMA IF NOT EXISTS test"
-//		                                   + ";TRACE_LEVEL_SYSTEM_OUT=2"
+		                                   + ";TRACE_LEVEL_SYSTEM_OUT=1"
 		                                  );
 	}
 

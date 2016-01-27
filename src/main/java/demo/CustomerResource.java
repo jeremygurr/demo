@@ -19,7 +19,7 @@ public class CustomerResource {
 	private final DataBridge db;
 
 	public CustomerResource() throws SQLException, ClassNotFoundException {
-		db = new SimpleDataBridge();
+		db = DataBridgeProvider.dataBridge;
 	}
 
 	public CustomerResource(final DataBridge db) {
@@ -78,7 +78,7 @@ public class CustomerResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCustomer(@PathParam("id") int customerId) {
 		final DataResult<Customer> result = db.getCustomer(SimpleId.make(customerId));
-		final Response response = Response.status(getResponseStatus(result, SC_CREATED)).entity(result.entity).build();
+		final Response response = Response.status(getResponseStatus(result, SC_OK)).entity(result.entity).build();
 		return response;
 	}
 

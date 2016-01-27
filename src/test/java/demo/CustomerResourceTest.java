@@ -130,23 +130,6 @@ public class CustomerResourceTest extends JerseyTest {
 		assertThat("wrong id set returned", customerIds, hasItems(c3, c4, c5));
 	}
 
-//	@Test
-	public void testMatchValue() {
-		final SimpleId c1 = createCustomer("Bob", "Tomato", "123-4567");
-		final SimpleId c2 = createCustomer("Larry", "Cucumber", "111-1111");
-		final SimpleId c3 = createCustomer("Bobby", "Tomato", "");
-		final SimpleId c4 = createCustomer("", "Tomato", "123-4567");
-		final SimpleId c5 = createCustomer("", "", "123-4567");
-		final SimpleId c6 = createCustomer("", "", "987-6543");
-
-		final Response response = target("customers/" + c1.id + "/matchValues").request(APPLICATION_JSON).buildGet().invoke();
-		assertThat("request failed", response.getStatus(), is(SC_OK));
-
-		final List<Integer> values = response.readEntity(new GenericType<List<Integer>>() { });
-		assertThat("bad response, no id list found", values, is(notNullValue()));
-		assertThat("wrong number of ids returned", values.size(), is(5));
-	}
-
 	@Test
 	public void testAddNullCustomer() {
 		final Entity<Customer> customerJson = Entity.json(null);
@@ -161,6 +144,19 @@ public class CustomerResourceTest extends JerseyTest {
 		final Response response = target("customers").request(APPLICATION_JSON).buildPost(customerJson).invoke();
 
 		assertThat("request failed", response.getStatus(), is(SC_BAD_REQUEST));
+	}
+
+	@Test
+	public void testGet() {
+		final SimpleId customerId = createCustomer("Bob", "Tomato", "123-4567");
+
+		final Response response = target("customers/" + customerId.id).request(APPLICATION_JSON).buildGet().invoke();
+		assertThat("request failed", response.getStatus(), is(SC_OK));
+
+		final Customer customerOut = response.readEntity(Customer.class);
+		assertThat(customerOut.firstName, is("Bob"));
+		assertThat(customerOut.lastName, is("Tomato"));
+		assertThat(customerOut.phone, is("123-4567"));
 	}
 
 }
