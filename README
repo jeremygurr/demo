@@ -55,6 +55,7 @@ one place. Also, having the database setup code as pure sql is less clean than
 I'd like it to be. I'd prefer to use a framework that can create and maintain
 the schema based on the core java entities. Integrating flyway would probably do
 the trick. It would also be nice to have a full searching engine framework in
-place too, like SOLR or ElasticSearch.
+place too, like SOLR or ElasticSearch. In a real deployment, I would want to 
+add authentication and encrypted communication as well.
 
 
