@@ -78,7 +78,12 @@ public class CustomerResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCustomer(@PathParam("id") int customerId) {
 		final DataResult<Customer> result = db.getCustomer(SimpleId.make(customerId));
-		final Response response = Response.status(getResponseStatus(result, SC_OK)).entity(result.entity).build();
+		final Response response;
+		if(result.exists) {
+			response = Response.status(getResponseStatus(result, SC_OK)).entity(result.entity).build();
+		} else {
+			response = Response.status(getResponseStatus(result, SC_NOT_FOUND)).build();
+		}
 		return response;
 	}
 

@@ -18,6 +18,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
@@ -159,4 +160,28 @@ public class CustomerResourceTest extends JerseyTest {
 		assertThat(customerOut.phone, is("123-4567"));
 	}
 
+
+	@Test
+	public void testGetFound() {
+		final SimpleId customerId = createCustomer("Bob", "Tomato", "123-4567");
+
+		final Response response = target("customers/" + customerId).request(APPLICATION_JSON).buildGet().invoke();
+		assertThat("request failed", response.getStatus(), is(SC_OK));
+
+		final Customer customerOut = response.readEntity(Customer.class);
+		assertThat(customerOut.firstName, is("Bob"));
+		assertThat(customerOut.lastName, is("Tomato"));
+		assertThat(customerOut.phone, is("123-4567"));
+	}
+
+	@Test
+	public void testGetNotFound() {
+		final SimpleId customerId = createCustomer("Bob", "Tomato", "123-4567");
+
+		final Response response = target("customers/" + (customerId.id + 1)).request(APPLICATION_JSON).buildGet().invoke();
+		assertThat("request failed", response.getStatus(), is(SC_NOT_FOUND));
+
+		final Customer customerOut = response.readEntity(Customer.class);
+		assertThat(customerOut, is(nullValue()));
+	}
 }
